@@ -71,7 +71,7 @@ header h1{margin:0;font-size:24px}
 
 .empty{text-align:center;color:#777;margin:40px 0}
 
-/* Media Modal */
+/* Modal */
 #mediaModal{
   display:none;
   position:fixed;
@@ -114,14 +114,14 @@ header h1{margin:0;font-size:24px}
   color:#000;
   text-decoration:none;
 }
-#downloadBtn.hidden{display:none}
-
-/* YouTube Confirm Modal */
-#ytConfirm{
+#downloadBtn.hidden{
   display:none;
+}
+#ytConfirm{
   position:fixed;
   inset:0;
   background:rgba(0,0,0,.6);
+  display:flex;
   align-items:center;
   justify-content:center;
   z-index:10000;
@@ -135,8 +135,14 @@ header h1{margin:0;font-size:24px}
   text-align:center;
   box-shadow:0 10px 30px rgba(0,0,0,.25);
 }
-.yt-box h3{margin-top:0;color:#0B3D2E}
-.yt-box p{color:#555;font-size:14px}
+.yt-box h3{
+  margin-top:0;
+  color:#0B3D2E;
+}
+.yt-box p{
+  color:#555;
+  font-size:14px;
+}
 .yt-actions{
   margin-top:20px;
   display:flex;
@@ -173,9 +179,8 @@ header h1{margin:0;font-size:24px}
     <button class="tab-btn" data-type="Download">Downloads</button>
   </div>
 </header>
-
 <!-- YouTube Confirm Modal -->
-<div id="ytConfirm">
+<div id="ytConfirm" style="display:none;">
   <div class="yt-box">
     <h3>Open Video on YouTube</h3>
     <p>This video is hosted on YouTube. Do you want to continue?</p>
@@ -185,10 +190,9 @@ header h1{margin:0;font-size:24px}
     </div>
   </div>
 </div>
-
 <div class="media-container" id="mediaContainer"></div>
 
-<!-- Media Modal -->
+<!-- Modal -->
 <div id="mediaModal">
   <span id="closeModal">&times;</span>
   <img id="modalImage">
@@ -222,14 +226,9 @@ const modal = document.getElementById("mediaModal");
 const modalImg = document.getElementById("modalImage");
 const downloadBtn = document.getElementById("downloadBtn");
 
-const ytModal = document.getElementById("ytConfirm");
-const ytCancel = document.getElementById("ytCancel");
-const ytProceed = document.getElementById("ytProceed");
-
 let mediaData = [];
 let currentType = "All";
 let currentIndex = 0;
-let pendingYT = "";
 
 /* Tabs */
 buttons.forEach(btn=>{
@@ -270,21 +269,21 @@ function renderMedia(){
         <div class="media-title">${m.title}</div>
         <div class="media-type">${m.type}</div>
       </div>`;
-
+    
     card.onclick=()=>{
-      if(m.type==="Video" && m.youtubeUrl){
-        pendingYT = m.youtubeUrl;
-        ytModal.style.display="flex";
+      if(m.type==="Video"){
+        if(confirm("This video will open on YouTube. Continue?")){
+          window.open(m.youtubeUrl,"_blank");
+        }
       } else {
         openModal(i);
       }
     };
-
     container.appendChild(card);
   });
 }
 
-/* Media Modal */
+/* Modal */
 function openModal(index){
   const list = currentType==="All"
     ? mediaData
@@ -292,7 +291,6 @@ function openModal(index){
 
   const m = list[index];
   currentIndex=index;
-
   modalImg.src = m.url || m.fullUrl || m.image;
 
   if(m.type==="Video"){
@@ -305,7 +303,6 @@ function openModal(index){
   modal.style.display="flex";
 }
 
-/* Navigation */
 document.getElementById("closeModal").onclick=()=>modal.style.display="none";
 document.getElementById("nextBtn").onclick=()=>navigate(1);
 document.getElementById("prevBtn").onclick=()=>navigate(-1);
@@ -317,17 +314,6 @@ function navigate(step){
   currentIndex=(currentIndex+step+list.length)%list.length;
   openModal(currentIndex);
 }
-
-/* YouTube Modal */
-ytCancel.onclick=()=>{
-  ytModal.style.display="none";
-  pendingYT="";
-};
-ytProceed.onclick=()=>{
-  if(pendingYT) window.open(pendingYT,"_blank");
-  ytModal.style.display="none";
-  pendingYT="";
-};
 </script>
 
 </body>
