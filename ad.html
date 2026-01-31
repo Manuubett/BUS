@@ -16,8 +16,9 @@
   input, textarea, select { width:100%; padding:10px; margin:8px 0 12px; border-radius:6px; border:1px solid #ccc; box-sizing:border-box; }
   button.submit-btn, button.login-btn { background:#0B3D2E; color:#E0B21B; border:none; padding:12px 24px; border-radius:6px; cursor:pointer; font-weight:bold; transition:all 0.2s; }
   button.submit-btn:hover, button.login-btn:hover { background:#0A1F16; }
-  .item-card { border:1px solid #ddd; padding:12px; margin-bottom:12px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; background:#f9f9f9; }
+  .item-card { border:1px solid #ddd; padding:12px; margin-bottom:12px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; background:#f9f9f9; transition: all 0.4s; }
   .item-card button { background:#c0392b; color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; }
+  .item-card.deleting { opacity:0.4; background:#ffebee; }
   .status, .login-status { margin:15px 0; font-weight:bold; text-align:center; min-height:1.5em; }
   #loginSection { max-width:450px; margin:60px auto; padding:30px; background:#fff; border-radius:10px; box-shadow:0 4px 15px rgba(0,0,0,0.15); }
   #loginSection h2 { color:#0B3D2E; text-align:center; margin-bottom:25px; }
@@ -199,13 +200,16 @@ async function uploadToImgBB(file) {
 async function uploadMultipleFiles(files) {
   const urls = [];
   for (const file of files) {
-    try { const { url } = await uploadToImgBB(file); urls.push(url); }
-    catch(err){ console.error(err); }
+    try {
+      const { url } = await uploadToImgBB(file);
+      urls.push(url);
+    } catch(err){
+      console.error('ImgBB upload error:', err);
+    }
   }
   return urls;
 }
 
-// Add News
 window.addNews = async () => {
   const title = document.getElementById('newsTitle').value.trim();
   const category = document.getElementById('newsCategory').value;
@@ -216,7 +220,6 @@ window.addNews = async () => {
   status.textContent='Uploading images...'; status.style.color='blue';
   try {
     const photos = await uploadMultipleFiles(files);
-    // Default expiry 7 days after posting
     const expiryDate = new Date();
     expiryDate.setDate(expiryDate.getDate() + 7);
 
@@ -230,10 +233,11 @@ window.addNews = async () => {
     document.getElementById('newsTitle').value='';
     document.getElementById('newsContent').value='';
     document.getElementById('newsPhotos').value='';
-  } catch(err){ status.textContent='Error: '+err.message; status.style.color='red'; }
+  } catch(err){
+    status.textContent='Error: '+err.message; status.style.color='red';
+  }
 };
 
-// Add Activity
 window.addActivity = async () => {
   const title = document.getElementById('activityTitle').value.trim();
   const desc = document.getElementById('activityDesc').value.trim();
@@ -254,7 +258,7 @@ window.addActivity = async () => {
   try {
     const photos = await uploadMultipleFiles(files);
     const expiryDate = new Date(date);
-    expiryDate.setDate(expiryDate.getDate() + 1); // expire next day
+    expiryDate.setDate(expiryDate.getDate() + 1);
 
     await addDoc(collection(db, 'activities'), {
       title,
@@ -279,7 +283,6 @@ window.addActivity = async () => {
   }
 };
 
-// Add Media
 window.addMedia = async () => {
   const title = document.getElementById('mediaTitle').value.trim();
   const type = document.getElementById('mediaType').value;
@@ -329,7 +332,6 @@ window.addMedia = async () => {
   }
 };
 
-// Add Member
 window.addMember = async () => {
   const name = document.getElementById('memberName').value.trim();
   const age = document.getElementById('memberAge').value;
@@ -337,55 +339,93 @@ window.addMember = async () => {
   const institution = document.getElementById('memberInstitution').value.trim();
   const type = document.getElementById('memberType').value;
   if(!name || !ward) return alert('Name and ward are required');
-  await addDoc(collection(db,'members'),{name,age,ward,institution,type,timestamp:serverTimestamp()});
+
+  await addDoc(collection(db,'members'),{
+    name, age, ward, institution, type,
+    timestamp:serverTimestamp()
+  });
+
   document.getElementById('memberName').value='';
   document.getElementById('memberAge').value='';
   document.getElementById('memberWard').value='';
   document.getElementById('memberInstitution').value='';
 };
 
-// Fetch list
+// ────────────────────────────────────────────────
+//              FIXED LIST + DELETE FUNCTION
+// ────────────────────────────────────────────────
 function fetchList(coll, containerId) {
   const container = document.getElementById(containerId);
-  const q = query(collection(db, coll), orderBy('timestamp','desc'));
+  const q = query(collection(db, coll), orderBy('timestamp', 'desc'));
+
   onSnapshot(q, snapshot => {
-    container.innerHTML='';
+    container.innerHTML = '';
     snapshot.forEach(d => {
       const data = d.data();
       const title = data.title || data.name || 'Item';
       const type = data.category || data.type || '';
+
       const div = document.createElement('div');
-      div.className='item-card';
-      div.innerHTML = `<span>${title} ${type ? '('+type+')' : ''}</span>
-        <button onclick="if(confirm('Delete this item?')) deleteDoc(doc(db,'${coll}','${d.id}'))">Delete</button>`;
+      div.className = 'item-card';
+
+      const span = document.createElement('span');
+      span.textContent = `${title} ${type ? '(' + type + ')' : ''}`;
+      div.appendChild(span);
+
+      const delBtn = document.createElement('button');
+      delBtn.textContent = 'Delete';
+      delBtn.addEventListener('click', async () => {
+        if (!confirm('Delete this item?')) return;
+
+        delBtn.disabled = true;
+        delBtn.textContent = 'Deleting...';
+        div.classList.add('deleting');
+
+        try {
+          await deleteDoc(doc(db, coll, d.id));
+          // Optional: smooth removal
+          setTimeout(() => div.remove(), 400);
+        } catch (err) {
+          console.error('Delete failed:', err);
+          alert('Delete failed: ' + err.message);
+          delBtn.disabled = false;
+          delBtn.textContent = 'Delete';
+          div.classList.remove('deleting');
+        }
+      });
+
+      div.appendChild(delBtn);
       container.appendChild(div);
     });
+  }, error => {
+    console.error("Snapshot error:", error);
   });
 }
 
-// Fetch all lists
-['news','activities','media','members'].forEach(coll => fetchList(coll, coll+'List'));
+// Load all lists
+['news', 'activities', 'media', 'members'].forEach(coll => {
+  fetchList(coll, coll + 'List');
+});
 
-// Auto-remove expired
+// Auto-remove expired items
 async function removeExpired(collectionName) {
   const now = new Date().toISOString();
   const snapshot = await getDocs(collection(db, collectionName));
   snapshot.forEach(async docSnap => {
     const data = docSnap.data();
- if (data.expiryDate && data.expiryDate <= now) {
+    if (data.expiryDate && data.expiryDate <= now) {
       await deleteDoc(doc(db, collectionName, docSnap.id));
       console.log(`Deleted expired ${collectionName}: ${data.title || data.name}`);
     }
   });
 }
 
-// Run auto-delete on page load
-['news','activities'].forEach(coll => removeExpired(coll));
-
-// Optional: run every 10 minutes in the background
+// Run on load + every 10 minutes
+['news', 'activities'].forEach(coll => removeExpired(coll));
 setInterval(() => {
-  ['news','activities'].forEach(coll => removeExpired(coll));
+  ['news', 'activities'].forEach(coll => removeExpired(coll));
 }, 10 * 60 * 1000);
+
 </script>
 </body>
-          </html>
+      </html>
