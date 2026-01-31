@@ -1,139 +1,295 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BUS Youth Ambassadors - Login & Registration</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #F6F4EF;
-    margin: 0;
-    padding: 0;
-  }
-  header {
-    background: #0B3D2E;
-    color: #E0B21B;
-    text-align: center;
-    padding: 20px;
-  }
-  .container {
-    max-width: 500px;
-    margin: 40px auto;
-    background: #fff url('https://i.ibb.co/fzpg1r0P/Screenshot-20260129-194058.png') no-repeat center center;
-    background-size: contain;
-    opacity: 0.95;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    position: relative;
-  }
-  input, select, button {
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    margin-bottom: 12px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-    box-sizing: border-box;
-  }
-  button {
-    background: #0B3D2E;
-    color: #E0B21B;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-    padding: 12px;
-  }
-  button:hover {
-    background: #0A1F16;
-  }
-  .success {
-    color: #155724;
-    background: #d4edda;
-    padding: 10px;
-    border-radius: 5px;
-    margin: 10px 0;
-    text-align: center;
-  }
-  .error {
-    color: #721c24;
-    background: #f8d7da;
-    padding: 10px;
-    border-radius: 5px;
-    margin: 10px 0;
-    text-align: center;
-  }
-  .toggle-link {
-    text-align: center;
-    margin-top: 15px;
-    color: #0B3D2E;
-  }
-  .toggle-link a {
-    color: #E0B21B;
-    font-weight: bold;
-    cursor: pointer;
-    text-decoration: underline;
-  }
-  .toggle-link a:hover {
-    color: #0A1F16;
-  }
-  #registrationContainer {
-    display: none;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BUS Youth Ambassadors – Join the Movement</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #0B3D2E;
+      --primary-dark: #08251c;
+      --accent: #E0B21B;
+      --accent-dark: #c49917;
+      --light: #F8F7F2;
+      --gray: #6B7280;
+      --gray-light: #E5E7EB;
+      --danger: #dc2626;
+      --success: #16a34a;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--light);
+      color: #1F2937;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: 1.5rem 1rem;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.1rem;
+      margin-bottom: 0.35rem;
+      letter-spacing: 0.5px;
+    }
+
+    header p {
+      font-size: 1.05rem;
+      opacity: 0.92;
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 2.5rem auto;
+      padding: 2.5rem 2rem;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(11,61,46,0.12);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .container::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: url('https://i.ibb.co/fzpg1r0P/Screenshot-20260129-194058.png') center / contain no-repeat;
+      opacity: 0.18;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .form-wrapper {
+      position: relative;
+      z-index: 1;
+    }
+
+    h2 {
+      font-family: 'Playfair Display', serif;
+      color: var(--primary);
+      text-align: center;
+      margin-bottom: 1.8rem;
+      font-size: 1.85rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.4rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #374151;
+      font-size: 0.95rem;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 0.9rem 1rem;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.2s;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(224,178,27,0.18);
+    }
+
+    button {
+      width: 100%;
+      padding: 1rem;
+      background: var(--primary);
+      color: var(--accent);
+      border: none;
+      border-radius: 8px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s;
+      margin-top: 0.8rem;
+    }
+
+    button:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .toggle-link {
+      text-align: center;
+      margin-top: 1.6rem;
+      font-size: 0.95rem;
+      color: var(--gray);
+    }
+
+    .toggle-link a {
+      color: var(--accent);
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .toggle-link a:hover {
+      color: var(--accent-dark);
+      text-decoration: underline;
+    }
+
+    .message {
+      padding: 0.9rem;
+      border-radius: 8px;
+      margin: 1rem 0;
+      font-size: 0.95rem;
+      text-align: center;
+    }
+
+    .success {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+
+    .error {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
+    #registrationContainer {
+      display: none;
+    }
+
+    @media (max-width: 520px) {
+      .container {
+        margin: 1.5rem 1rem;
+        padding: 2rem 1.5rem;
+      }
+      header h1 { font-size: 1.8rem; }
+    }
+  </style>
 </head>
 <body>
 
 <header>
   <h1>BUS Youth Ambassadors</h1>
+  <p>Empowering the Next Generation • Embu • Kenya</p>
 </header>
 
-<div class="container" id="loginContainer">
-  <h2 style="text-align:center; color:#0B3D2E;">Login</h2>
-  <form id="loginForm">
-    <input type="email" id="loginEmail" placeholder="Email" required autocomplete="email">
-    <input type="password" id="loginPassword" placeholder="Password" required autocomplete="current-password">
-    <button type="submit">Login</button>
-    <div id="loginMessage" class="error"></div>
-  </form>
+<div class="container">
+  <div class="form-wrapper" id="loginContainer">
+    <h2>Welcome Back</h2>
+    
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="loginEmail">Email Address</label>
+        <input type="email" id="loginEmail" placeholder="you@example.com" required autocomplete="email">
+      </div>
+      
+      <div class="form-group">
+        <label for="loginPassword">Password</label>
+        <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password">
+      </div>
 
-  <div class="toggle-link">
-    Not registered yet? <a id="showRegister">Create an account</a>
+      <button type="submit" id="loginBtn">Sign In</button>
+      <div id="loginMessage" class="message"></div>
+    </form>
+
+    <div class="toggle-link">
+      Don't have an account? <a id="showRegister">Register now</a>
+    </div>
+  </div>
+
+  <div class="form-wrapper" id="registrationContainer">
+    <h2>Join the Movement</h2>
+    
+    <form id="registrationForm">
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" placeholder="John Kamau" required autocomplete="name">
+      </div>
+
+      <div class="form-group">
+        <label for="age">Age</label>
+        <input type="number" id="age" min="10" placeholder="18" required>
+      </div>
+
+      <div class="form-group">
+        <label for="ward">Ward / Constituency</label>
+        <input type="text" id="ward" placeholder="e.g. Kithimu" required list="ward-list" autocomplete="off">
+        <datalist id="ward-list"></datalist>
+      </div>
+
+      <div class="form-group">
+        <label for="membership">Membership Type</label>
+        <select id="membership" required>
+          <option value="">Select type</option>
+          <option value="Youth">Youth</option>
+          <option value="Associate">Associate</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" placeholder="07XXXXXXXX" required pattern="[0-9]{9,12}">
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" placeholder="you@example.com" required autocomplete="email">
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="At least 6 characters" required minlength="6" autocomplete="new-password">
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" id="confirmPassword" placeholder="Confirm password" required minlength="6" autocomplete="new-password">
+      </div>
+
+      <button type="submit" id="registerBtn">Create Account</button>
+      
+      <div id="successMessage" class="message success" style="display:none;"></div>
+      <div id="regErrorMessage" class="message error" style="display:none;"></div>
+    </form>
+
+    <div class="toggle-link">
+      Already registered? <a id="showLogin">Sign in here</a>
+    </div>
   </div>
 </div>
 
-<div class="container" id="registrationContainer">
-  <h2 style="text-align:center; color:#0B3D2E;">Register</h2>
-  <form id="registrationForm">
-    <input type="text" id="name" placeholder="Full Name" required autocomplete="name">
-    <input type="number" id="age" placeholder="Age" min="10" required>
-    <input type="text" id="ward" placeholder="Ward / Constituency" required list="ward-list">
-    <datalist id="ward-list"></datalist>
-    <select id="membership" required>
-      <option value="">Select Membership Type</option>
-      <option value="Youth">Youth</option>
-      <option value="Associate">Associate</option>
-    </select>
-    <input type="tel" id="phone" placeholder="Phone Number" required pattern="[0-9]{9,12}" autocomplete="tel">
-    <input type="email" id="email" placeholder="Email" required autocomplete="email">
-    <input type="password" id="password" placeholder="Password" required minlength="6" autocomplete="new-password">
-    <input type="password" id="confirmPassword" placeholder="Confirm Password" required minlength="6" autocomplete="new-password">
-    <button type="submit">Register</button>
-    <div id="successMessage" class="success"></div>
-    <div id="regErrorMessage" class="error"></div>
-  </form>
-
-  <div class="toggle-link">
-    Already have an account? <a id="showLogin">Login here</a>
-  </div>
-</div>
-
-<!-- Firebase SDK (compat version) -->
+<!-- Firebase Compat SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
 // ────────────────────────────────────────────────
@@ -147,12 +303,11 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
 const auth = firebase.auth();
+const db = firebase.firestore();
 
-// ────────────────────────────────────────────────
-// Wards datalist
-let wards = [
+// ──────────────────────────────────────────────── Wards
+const wards = [
   "Ruguru‑Ngandori","Kithimu","Nginda","Mbeti North","Kirimari",
   "Gaturi South","Gaturi North","Kagaari South","Runyenjes Central",
   "Kagaari North","Kyeni North","Kyeni South","Mwea","Makima",
@@ -167,24 +322,22 @@ const wardList = document.getElementById('ward-list');
 function refreshWardList() {
   wardList.innerHTML = '';
   wards.forEach(w => {
-    const option = document.createElement('option');
-    option.value = w;
-    wardList.appendChild(option);
+    let opt = document.createElement('option');
+    opt.value = w;
+    wardList.appendChild(opt);
   });
 }
 refreshWardList();
 
 wardInput.addEventListener('blur', () => {
-  const val = wardInput.value.trim();
+  let val = wardInput.value.trim();
   if (val && !wards.includes(val)) {
     wards.push(val);
     refreshWardList();
-    console.log(`New ward added: ${val}`);
   }
 });
 
-// ────────────────────────────────────────────────
-// Toggle between login & register
+// ──────────────────────────────────────────────── Toggle
 function showLogin() {
   document.getElementById('registrationContainer').style.display = 'none';
   document.getElementById('loginContainer').style.display = 'block';
@@ -195,92 +348,105 @@ function showRegister() {
   document.getElementById('registrationContainer').style.display = 'block';
 }
 
-document.getElementById('showRegister').addEventListener('click', showRegister);
-document.getElementById('showLogin').addEventListener('click', showLogin);
+document.getElementById('showRegister').onclick = showRegister;
+document.getElementById('showLogin').onclick = showLogin;
 
-// ────────────────────────────────────────────────
-// Registration
-const registrationForm = document.getElementById('registrationForm');
+// ──────────────────────────────────────────────── Registration
+const regForm = document.getElementById('registrationForm');
+const regBtn = document.getElementById('registerBtn');
 const successMsg = document.getElementById('successMessage');
-const regErrorMsg = document.getElementById('regErrorMessage');
+const regErr = document.getElementById('regErrorMessage');
 
-registrationForm.addEventListener('submit', async (e) => {
+regForm.addEventListener('submit', async e => {
   e.preventDefault();
-
-  successMsg.textContent = '';
-  regErrorMsg.textContent = '';
+  
+  successMsg.style.display = 'none';
+  regErr.style.display = 'none';
+  regBtn.disabled = true;
+  regBtn.textContent = "Creating account...";
 
   const name  = document.getElementById('name').value.trim();
-  const age   = document.getElementById('age').value;
+  const age   = Number(document.getElementById('age').value);
   const ward  = wardInput.value.trim();
   const membership = document.getElementById('membership').value;
   const phone = document.getElementById('phone').value.trim();
   const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value;
-  const confirm = document.getElementById('confirmPassword').value;
+  const pass  = document.getElementById('password').value;
+  const conf  = document.getElementById('confirmPassword').value;
 
-  if (password !== confirm) {
-    regErrorMsg.textContent = "Passwords do not match!";
+  if (pass !== conf) {
+    regErr.textContent = "Passwords do not match.";
+    regErr.style.display = 'block';
+    regBtn.disabled = false;
+    regBtn.textContent = "Create Account";
     return;
   }
 
   try {
-    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-    const user = userCredential.user;
+    const userCred = await auth.createUserWithEmailAndPassword(email, pass);
+    const user = userCred.user;
 
     const year = new Date().getFullYear();
     const prefix = membership === "Youth" ? "Y" : "A";
-
-    const snapshot = await db.collection('members')
-      .where('membership', '==', membership)
-      .get();
-
-    const nextId = snapshot.size + 1;
-    const membershipId = `\( {prefix}- \){year}-${nextId.toString().padStart(4, '0')}`;
+    const snap = await db.collection('members').where('membership','==',membership).get();
+    const next = snap.size + 1;
+    const mid = `\( {prefix}- \){year}-${next.toString().padStart(4,'0')}`;
 
     await db.collection('members').doc(user.uid).set({
-      name,
-      age: Number(age),
-      ward,
-      membership,
-      membershipId,
-      phone,
-      email,
+      name, age, ward, membership, membershipId: mid,
+      phone, email,
       registeredAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
-    successMsg.textContent = `Registration successful! Your Membership ID: ${membershipId}`;
-    
-    registrationForm.reset();
+    successMsg.textContent = `Success! Your Membership ID: ${mid}`;
+    successMsg.style.display = 'block';
+    regForm.reset();
 
-    setTimeout(showLogin, 2200);   // auto-switch to login after ~2s
+    setTimeout(showLogin, 2400);
 
-  } catch (error) {
-    regErrorMsg.textContent = error.message;
+  } catch (err) {
+    regErr.textContent = err.message.includes("email-already-in-use") 
+      ? "This email is already registered." 
+      : err.message;
+    regErr.style.display = 'block';
+  } finally {
+    regBtn.disabled = false;
+    regBtn.textContent = "Create Account";
   }
 });
 
-// ────────────────────────────────────────────────
-// Login
+// ──────────────────────────────────────────────── Login
 const loginForm = document.getElementById('loginForm');
+const loginBtn = document.getElementById('loginBtn');
 const loginMsg = document.getElementById('loginMessage');
 
-loginForm.addEventListener('submit', async (e) => {
+loginForm.addEventListener('submit', async e => {
   e.preventDefault();
-
+  
+  loginMsg.className = 'message';
   loginMsg.textContent = '';
+  loginBtn.disabled = true;
+  loginBtn.textContent = "Signing in...";
+
   const email = document.getElementById('loginEmail').value.trim();
-  const password = document.getElementById('loginPassword').value;
+  const pass  = document.getElementById('loginPassword').value;
 
   try {
-    await auth.signInWithEmailAndPassword(email, password);
-    window.location.href = 'main.html';   // or dashboard.html / home.html
-  } catch (error) {
-    loginMsg.textContent = error.message;
+    await auth.signInWithEmailAndPassword(email, pass);
+    window.location.href = 'main.html'; // ← your dashboard / home page
+  } catch (err) {
+    loginMsg.className = 'message error';
+    loginMsg.textContent = err.message.includes("wrong-password") 
+      ? "Incorrect password." 
+      : err.message.includes("user-not-found") 
+        ? "No account found with this email." 
+        : err.message;
+  } finally {
+    loginBtn.disabled = false;
+    loginBtn.textContent = "Sign In";
   }
 });
 
 </script>
-
 </body>
-  </html>
+</html>
