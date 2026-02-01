@@ -448,5 +448,14 @@ loginForm.addEventListener('submit', async e => {
 });
 
 </script>
+  <script>
+  // 🔐 Auto-redirect if user is already logged in
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      // User is logged in → go to main page
+      window.location.href = 'main.html';
+    }
+  });
+  </script>
 </body>
 </html>
