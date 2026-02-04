@@ -1116,6 +1116,110 @@
           return 'An error occurred. Please try again.';
       }
     }
+    // ───────── Auto-fill Login Form ─────────
+window.addEventListener("DOMContentLoaded", () => {
+  const savedEmail = localStorage.getItem("savedEmail");
+  const savedPassword = localStorage.getItem("savedPassword");
+
+  if (savedEmail) document.getElementById('loginEmail').value = savedEmail;
+  if (savedPassword) document.getElementById('loginPassword').value = savedPassword;
+});
+
+// Save login credentials locally on successful login
+loginForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const loginMsg = document.getElementById('loginMsg');
+  loginMsg.style.display = 'none';
+  
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  
+  try {
+    const userCred = await auth.signInWithEmailAndPassword(email, password);
+    const user = userCred.user;
+
+    // Save credentials for auto-fill next time
+    localStorage.setItem("savedEmail", email);
+    localStorage.setItem("savedPassword", password);
+
+    // Existing post-login logic...
+    const userDoc = await db.collection('members').doc(user.uid).get();
+    
+    if (userDoc.exists) {
+      const userData = userDoc.data();
+      if (userData.paidTill) {
+        window.location.href = 'main.html';
+      } else {
+        localStorage.setItem("nationalId", userData.nationalId || "");
+        localStorage.setItem("currentStep", "payment");
+        showPaymentScreen();
+      }
+    } else {
+      await auth.signOut();
+      loginMsg.textContent = "No registration found. Please register first.";
+      loginMsg.className = "message error";
+      loginMsg.style.display = 'block';
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+    loginMsg.textContent = getErrorMessage(error.code);
+    loginMsg.className = "message error";
+    loginMsg.style.display = 'block';
+  }
+});
+
+// ───────── Auto-fill Year in Registration ─────────
+function autoFillYearOfBirth() {
+  const preVerifyYear = localStorage.getItem("preVerifyYear");
+  if (preVerifyYear) {
+    const dobInput = document.getElementById("dob");
+    const today = new Date();
+    const currentMonthDay = dobInput.value ? dobInput.value.slice(5) : "-01-01"; // default Jan 1
+    dobInput.value = `${preVerifyYear}${currentMonthDay}`;
+  }
+}
+
+// Call this when showing the registration screen
+function showRegistrationScreen() {
+  loginContainer.style.display = 'none';
+  registerOptionsContainer.style.display = 'none';
+  preVerifyContainer.style.display = 'none';
+  registrationContainer.style.display = 'block';
+  paymentContainer.style.display = 'none';
+
+  // auto-fill National ID
+  document.getElementById("regNationalId").value = localStorage.getItem("nationalId") || "";
+
+  // auto-fill year of birth if pre-verified
+  autoFillYearOfBirth();
+}
+
+// Save pre-verified year for auto-fill
+preVerifyForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  const nationalId = document.getElementById('preVerifyId').value.trim();
+  const yearOfBirth = document.getElementById('preVerifyYear').value.trim();
+
+  try {
+    await db.collection('preVerifications').doc(nationalId).set({
+      nationalId, yearOfBirth, approved:false, requestedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    localStorage.setItem("nationalId", nationalId);
+    localStorage.setItem("preVerifyYear", yearOfBirth); // store year for auto-fill
+    localStorage.setItem("currentStep","preVerification");
+
+    const msg = document.getElementById("preVerifyMsg");
+    msg.textContent = "Submitted for verification. Wait for admin approval.";
+    msg.className="message success"; 
+    msg.style.display="block";
+    preVerifyForm.reset();
+  } catch(err){
+    const msg = document.getElementById("preVerifyMsg");
+    msg.textContent = err.message; 
+    msg.className="message error"; 
+    msg.style.display="block";
+  }
+});
 
   </script>
 </body>
