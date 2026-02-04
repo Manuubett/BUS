@@ -466,13 +466,13 @@
           <label for="fullName">Full Name</label>
           <input type="text" id="fullName" placeholder="John Kamau" required>
         </div>
-
-        <!-- DOB -->
-        <div class="form-group">
-          <label for="dob">Date of Birth</label>
-          <input type="date" id="dob" required max="">
-          <small>You must be at least 18 years old and born after 1990</small>
-        </div>
+<!-- DOB Year Only (Read-only) -->
+<div class="form-group">
+  <label for="dobYear">Year of Birth</label>
+  <input type="number" id="dobYear" placeholder="YYYY" required min="1990" max="2005" readonly>
+  <small>Year of birth is pre-verified by admin and cannot be changed</small>
+</div>
+        
 
         <!-- Phone -->
         <div class="form-group">
@@ -1168,16 +1168,15 @@ loginForm.addEventListener('submit', async (e) => {
   }
 });
 
-// ───────── Auto-fill Year in Registration ─────────
+// ───────── Auto-fill Year in Registration ─────────// Auto-fill year of birth (read-only)
 function autoFillYearOfBirth() {
+  const yearInput = document.getElementById("dobYear");
   const preVerifyYear = localStorage.getItem("preVerifyYear");
   if (preVerifyYear) {
-    const dobInput = document.getElementById("dob");
-    const today = new Date();
-    const currentMonthDay = dobInput.value ? dobInput.value.slice(5) : "-01-01"; // default Jan 1
-    dobInput.value = `${preVerifyYear}${currentMonthDay}`;
+    yearInput.value = preVerifyYear;
   }
 }
+
 
 // Call this when showing the registration screen
 function showRegistrationScreen() {
@@ -1219,6 +1218,19 @@ preVerifyForm.addEventListener('submit', async e => {
     msg.className="message error"; 
     msg.style.display="block";
   }
+  function showRegistrationScreen() {
+  loginContainer.style.display = 'none';
+  registerOptionsContainer.style.display = 'none';
+  preVerifyContainer.style.display = 'none';
+  registrationContainer.style.display = 'block';
+  paymentContainer.style.display = 'none';
+
+  // auto-fill National ID
+  document.getElementById("regNationalId").value = localStorage.getItem("nationalId") || "";
+
+  // auto-fill year of birth (read-only)
+  autoFillYearOfBirth();
+}
 });
 
   </script>
