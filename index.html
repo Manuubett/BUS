@@ -877,12 +877,15 @@ loginForm.addEventListener('submit', async (e) => {
       
       try {
         await db.collection('preVerifications').doc(nationalId).set({
-          nationalId,
-          yearOfBirth,
-          approved: false,
-          requestedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        
+  nationalId,
+  yearOfBirth,
+  verifiedByUser: true,
+  createdAt: firebase.firestore.FieldValue.serverTimestamp()
+});
+
+// immediately go to registration
+savePreVerifyData(nationalId, yearOfBirth);
+showRegistrationScreen();
         // Save to localStorage
         savePreVerifyData(nationalId, yearOfBirth);
         msg.textContent = 'Submitted for verification by IEBC officials. You will be redirected when approved. This may take time due to traffic. Thanks for your time.';
@@ -963,13 +966,14 @@ loginForm.addEventListener('submit', async (e) => {
       
       // Check if approved
       try {
-        const preVerifyDoc = await db.collection('preVerifications').doc(nationalId).get();
-        if (!preVerifyDoc.exists || !preVerifyDoc.data().approved) {
-          msg.textContent = 'Your ID is not approved yet';
-          msg.className = 'message error';
-          msg.style.display = 'block';
-          return;
-        }
+        // optional: check preVerify exists
+const preVerifyDoc = await db.collection('preVerifications').doc(nationalId).get();
+if (!preVerifyDoc.exists) {
+  msg.textContent = 'Please enter your ID first';
+  return;
+}
+
+// proceed to save registration
       } catch (error) {
         msg.textContent = 'Error checking approval status';
         msg.className = 'message error';
