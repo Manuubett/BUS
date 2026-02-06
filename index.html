@@ -17,6 +17,13 @@
       --error: #DC2626;
       --success: #059669;
     }
+    :root {
+  --safe-top: env(safe-area-inset-top, 24px);
+}
+
+body {
+  padding-top: var(--safe-top);
+}
     
     *{margin:0;padding:0;box-sizing:border-box;}
     body{
